@@ -68,13 +68,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService, Watcher<Cl
 
         MqttxConfig.Cluster cluster = mqttxConfig.getCluster();
         this.enableCluster = cluster.getEnable();
-        if (!enableCluster) {
-            //如果用户没有设置，非集群状态下，默认开启缓存
-            this.enableInnerCache = mqttxConfig.getEnableInnerCache() == null ? true : mqttxConfig.getEnableInnerCache();
-        } else {
-            //如果用户没有设置，集群状态下，默认关闭缓存
-            this.enableInnerCache = mqttxConfig.getEnableInnerCache() == null ? false : mqttxConfig.getEnableInnerCache();
-        }
+        this.enableInnerCache = mqttxConfig.getEnableInnerCache();
         if (enableInnerCache) {
             allTopics = ConcurrentHashMap.newKeySet();
             topicClientMap = new ConcurrentHashMap<>();

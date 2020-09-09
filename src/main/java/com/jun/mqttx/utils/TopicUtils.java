@@ -6,21 +6,38 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import org.springframework.util.StringUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * mqtt topic工具类
  *
  * @author Jun
- * @date 2020-04-23 09:55
+ * @since 1.0.4
  */
 public class TopicUtils {
 
-    /**
-     * 共享订阅前缀
-     */
-    private static final String SHARE_TOPIC_PREFIX = "$share";
+    private static final String SHARE_TOPIC = "$share";
+
+    private static final String SYS_TOPIC = "$SYS";
+
+    private static final Set<String> sysTopicSets;
+
+    /* 当前连接的客户端数 */
+    public static final String BROKER_CLIENT_CONNECTED = SYS_TOPIC + "/broker/clients/connected";
+    /* 服务器时间 */
+    public static final String BROKER_TIME = SYS_TOPIC + "/time";
+    /* mqttx 版本 */
+    public static final String BROKER_VERSION = SYS_TOPIC + "/version";
+
+    static {
+        sysTopicSets = new HashSet<>();
+        sysTopicSets.add(BROKER_CLIENT_CONNECTED);
+        sysTopicSets.add(BROKER_TIME);
+        sysTopicSets.add(BROKER_VERSION);
+    }
 
     /**
      * client 是否被允许订阅 topic
@@ -70,6 +87,16 @@ public class TopicUtils {
     }
 
     /**
+     * 系统 topic
+     *
+     * @param topic 主题
+     * @return true, if topic is sys
+     */
+    public static boolean isSys(String topic) {
+        return sysTopicSets.contains(topic);
+    }
+
+    /**
      * 共享主题格式：<code>$share/{ShareName}/{filter}</code>;
      * <ul>
      *     <li>$share 前缀表示这是一个共享订阅</li>
@@ -89,7 +116,7 @@ public class TopicUtils {
 
         for (int i = 0; i < split.length; i++) {
             String s = split[i];
-            if (i == 0 && !SHARE_TOPIC_PREFIX.equals(s)) {
+            if (i == 0 && !SHARE_TOPIC.equals(s)) {
                 return false;
             }
             if (i == 1 && (s.contains("+") || s.contains("#"))) {
@@ -154,7 +181,7 @@ public class TopicUtils {
             }
 
             //增加共享订阅主题合法性判断
-            if (i == 0 && SHARE_TOPIC_PREFIX.equals(fragment)) {
+            if (i == 0 && SHARE_TOPIC.equalsIgnoreCase(fragment)) {
                 isStartWithShare = true;
             }
             if (isStartWithShare && i == 1 && (fragment.contains("+") || fragment.contains("#"))) {

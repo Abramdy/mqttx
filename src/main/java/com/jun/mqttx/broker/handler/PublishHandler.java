@@ -47,6 +47,7 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
     private IInternalMessagePublishService internalMessagePublishService;
 
     private int brokerId;
+    private String mqttxVersion;
 
     private Boolean enableCluster, enableTopicSubPubSecure, enableShareTopic;
     private ShareStrategy shareStrategy;
@@ -72,6 +73,7 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
         this.subscriptionService = subscriptionService;
         this.pubRelMessageService = pubRelMessageService;
         this.brokerId = mqttxConfig.getBrokerId();
+        this.mqttxVersion = mqttxConfig.getVersion();
         this.enableCluster = cluster.getEnable();
         this.enableTopicSubPubSecure = mqttxConfig.getEnableTopicSubPubSecure();
         this.enableShareTopic = shareTopic.getEnable();

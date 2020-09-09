@@ -7,12 +7,13 @@ import com.jun.mqttx.entity.InternalMessage;
  * 观察者，实现此接口.
  *
  * @author Jun
- * @date 2020-05-14 09:15
+ * @since 1.0.4
  */
 public interface Watcher<T> {
 
     /**
-     * 每当有新的集群消息达到是，触发行为。注意：方法不允许出现阻塞操作
+     * 每当有新的集群消息达到，触发行为.
+     * 注意：方法不允许出现耗时（阻塞）操作
      *
      * @param im {@see InternalMessage}
      */
