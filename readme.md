@@ -170,30 +170,23 @@
 > `msg-a` 消息分发策略取决于配置项 `mqttx.share-topic.share-sub-strategy` .
 >
 > 可以配合 `cleanSession = 1` 的会话，共享主题的客户端断开连接后会被服务端移除订阅，这样共享主题的消息只会分发给在线的客户端。
->
-> 需要注意`mqtt3.1.1` 协议规定当 `cleanSession = 1`, 则连接断开后与会话相关联的所有状态都会被删除（`mqtt5`  增加了会话超时设置，感兴趣的同学可以了解一下）
+> 注意: `mqtt3.1.1` 协议规定当 `cleanSession = 1` 时，连接断开后与会话相关联的所有状态（不含 retained 消息）都会被删除（`mqtt5`  增加了会话超时设置，感兴趣的同学可以了解一下）
 >
 > > If CleanSession is set to 1, the Client and Server **MUST** discard any previous Session and start a new one. This Session lasts as long as the Network Connection. State data associated with this Session **MUST NOT** be reused in any subsequent Session [MQTT-3.1.2-6].
 > >
 > > The Session state in the Client consists of:
 > >
-> > ·     QoS 1 and QoS 2 messages which have been sent to the Server, but have not been completely acknowledged.
-> >
-> > ·     QoS 2 messages which have been received from the Server, but have not been completely acknowledged. 
+> > - QoS 1 and QoS 2 messages which have been sent to the Server, but have not been completely acknowledged.
+> > - QoS 2 messages which have been received from the Server, but have not been completely acknowledged. 
 > >
 > > The Session state in the Server consists of:
 > >
-> > ·     The existence of a Session, even if the rest of the Session state is empty.
-> >
-> > ·     The Client’s subscriptions.
-> >
-> > ·     QoS 1 and QoS 2 messages which have been sent to the Client, but have not been completely acknowledged.
-> >
-> > ·     QoS 1 and QoS 2 messages pending transmission to the Client.
-> >
-> > ·     QoS 2 messages which have been received from the Client, but have not been completely acknowledged.
-> >
-> > ·     Optionally, QoS 0 messages pending transmission to the Client. 
+> > - The existence of a Session, even if the rest of the Session state is empty.
+> > - The Client’s subscriptions.
+> > - QoS 1 and QoS 2 messages which have been sent to the Client, but have not been completely acknowledged.
+> > - QoS 1 and QoS 2 messages pending transmission to the Client.
+> > - QoS 2 messages which have been received from the Client, but have not been completely acknowledged.
+> > - Optionally, QoS 0 messages pending transmission to the Client. 
 >
 
 #### 4.7 websocket 支持
