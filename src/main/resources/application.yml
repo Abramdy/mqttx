@@ -5,6 +5,7 @@ spring:
     active: @profile@
 
 # 建议其它配置项位于 dev 或 prod
+# application-test.yml
 mqttx:
   version: @version@
   broker-id: 1001

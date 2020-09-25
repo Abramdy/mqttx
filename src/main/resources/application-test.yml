@@ -1,0 +1,8 @@
+# 测试模式 profile
+
+mqttx:
+  web-socket:
+    enable: true
+  sys-topic:
+    enable: true
+  enable-test-mode: true

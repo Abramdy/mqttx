@@ -22,6 +22,7 @@
 ## 1 介绍
 
 `mqttx` 基于 [mqtt v3.1.1](http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html) 官方协议文档开发。
+
 项目运行说明：
 
   1. 使用`springboot`推荐的启动方式 `java -jar app.jar`，使用 `mvn clean package` 打包，这种方式需要修改配置文件(`resources/application.yml`)中 redis 地址和端口。
@@ -258,6 +259,7 @@
 | `mqttx.soBacklog`                        | `512`                           | tcp 连接处理队列                                             |
 | `mqttx.enableTopicSubPubSecure`          | `false`                         | 客户订阅/发布主题安全功能，开启后将限制客户端发布/订阅的主题 |
 | `mqttx.enableInnerCache`                 | `true`                          | 发布消息每次都需要查询 redis 来获取订阅的客户端列表。开启此功能后，将在内存中建立一个主题-客户端关系映射, 应用直接访问内存中的数据即可 |
+| `mqttx.enableTestMode` | `false` | 开启测试模式 |
 | `mqttx.redis.clusterSessionHashKey`      | `mqttx.session.key`             | redis map key；用于集群的会话存储                          |
 | `mqttx.redis.topicPrefix`                | `mqttx:topic:`                  | 主题前缀； topic <--> client 映射关系保存                    |
 | `mqttx.redis.retainMessagePrefix`        | `mqttx:retain:`                 | 保留消息前缀, 保存 retian 消息                               |
