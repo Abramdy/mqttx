@@ -56,7 +56,7 @@ public class PublishMessageServiceImpl implements IPublishMessageService {
     public List<PubMsg> search(String clientId) {
         List<Object> values = stringRedisTemplate.opsForHash().values(key(clientId));
         if (CollectionUtils.isEmpty(values)) {
-            //noinspection unchecked
+            // noinspection unchecked
             return Collections.EMPTY_LIST;
         }
 
