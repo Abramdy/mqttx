@@ -127,7 +127,9 @@ public class BrokerInitializer {
         }
 
         if (Epoll.isAvailable()) {
-            log.info("epoll 可用，启用 EpollEventLoopGroup");
+            log.info("Epoll 可用，启用 {}", EpollEventLoopGroup.class.getName());
+        } else {
+            log.info("Epoll 不可用，启用 {}", NioEventLoopGroup.class.getName());
         }
     }
 
@@ -253,7 +255,6 @@ public class BrokerInitializer {
                         pipeline.addLast(new HttpServerCodec());
                         pipeline.addLast(new HttpObjectAggregator(65536));
                         pipeline.addLast(new WebSocketServerCompressionHandler());
-                        // 请求头中 Sec-WebSocket-Protocol: mqtt, 故 subprotocols 应该支持 mqtt
                         pipeline.addLast(new WebSocketServerProtocolHandler(websocketPath, "mqtt", true));
                         pipeline.addLast(new MqttWebsocketCodec());
                         pipeline.addLast(MqttEncoder.INSTANCE);
