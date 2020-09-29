@@ -1,5 +1,6 @@
 package com.jun.mqttx.config;
 
+import com.jun.mqttx.constants.MessageQueueBridgeType;
 import com.jun.mqttx.constants.ShareStrategy;
 import io.netty.handler.ssl.ClientAuth;
 import lombok.Data;
@@ -79,7 +80,7 @@ public class MqttxConfig {
 
     private SysTopic sysTopic = new SysTopic();
 
-    private MessageBridge messageBridge = new MessageBridge();
+    private MessageQueueBridge messageQueueBridge = new MessageQueueBridge();
 
     /**
      * redis 配置
@@ -128,7 +129,7 @@ public class MqttxConfig {
         /**
          * 处理集群消息的中间件类型
          */
-        private String type = "redis";
+        private String type = ClusterConfig.REDIS;
     }
 
     /**
@@ -229,16 +230,33 @@ public class MqttxConfig {
     }
 
     /**
-     * 消息桥接配置
-     *
+     * 消息桥接配置（或称消息透传）.
+     * <p>
+     * 以 kafka 为例，subTopics 就是 kafka 订阅的主题，pubTopics 是 kafka 需要发布的主题。当用户通过应用发布消息到 kafka 后，
+     * mqttx 监听对应的主题并将消息推送给订阅了该主题的 client.
+     * <p>
+     * <b>数据必须是字节流</b>
      */
     @Data
-    public static class MessageBridge{
+    public static class MessageQueueBridge{
 
         /** 开关 */
         private Boolean enable = false;
 
-        /** 需要桥接消息的主题, 不允许通配符 */
-        private Set<String> topics = null;
+        /** 订阅的主题, 不允许通配符 */
+        private Set<String> subTopics = null;
+
+        /** 需要发布消息的主题，不允许通配符 */
+        private Set<String> pubTopics = null;
+
+        /**
+         * 消息桥接类型
+         * <ul>
+         *     <li>{@link MessageQueueBridgeType#SUB} MQ 仅订阅消息</li>
+         *     <li>{@link MessageQueueBridgeType#PUB} MQ 仅发布消息</li>
+         *     <li>{@link MessageQueueBridgeType#ALL} MQ 订阅且消息</li>
+         * </ul>
+         */
+        private MessageQueueBridgeType type = MessageQueueBridgeType.SUB;
     }
 }

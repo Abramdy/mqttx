@@ -24,6 +24,16 @@ public enum InternalMessageEnum {
 
     SUB_UNSUB(8, "INTERNAL_SUB_OR_UNSUB");
 
+    public static final String[] CLUSTER_CHANNELS = {
+            PUB.channel,
+            PUB_ACK.channel,
+            PUB_REC.channel,
+            PUB_COM.channel,
+            DISCONNECT.channel,
+            ALTER_USER_AUTHORIZED_TOPICS.channel,
+            SUB_UNSUB.channel
+    };
+
     private int type;
 
     /**

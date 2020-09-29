@@ -21,6 +21,8 @@ public class InternalMessageSubscriber {
 
     private List<Watcher> watchers;
 
+    private List<BridgeMessageWatcher> bridgeMessageWatchers;
+
     public InternalMessageSubscriber(List<Watcher> watchers, MqttxConfig mqttxConfig) {
         Assert.notNull(watchers, "watchers can't be null");
         Assert.notNull(mqttxConfig, "mqttxConfig can't be null");
@@ -59,6 +61,13 @@ public class InternalMessageSubscriber {
                 // 一个消息只能由一个观察者消费
                 break;
             }
+        }
+    }
+
+
+    public void handleBridgeMessage(String topic, byte[] data) {
+        for (BridgeMessageWatcher watcher : bridgeMessageWatchers) {
+            watcher.action(topic, data);
         }
     }
 }

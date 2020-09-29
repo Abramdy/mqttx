@@ -63,6 +63,9 @@
       "values": [
         {
           "value": "redis"
+        },
+        {
+          "value": "kafka"
         }
       ]
     }

@@ -15,7 +15,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.mqtt.*;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -57,8 +58,8 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
      * 消息桥接开关
      */
     private Boolean enableMessageBridge;
-    private Set<String> bridgeTopics;
-    private KafkaTemplate<String, byte[]> kafkaTemplate;
+    private Set<String> mqSubTopics;
+    private KafkaProducer<String, byte[]> kafkaProducer;
 
     /**
      * 共享订阅轮询，存储轮询参数
@@ -68,7 +69,7 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
     public PublishHandler(IPublishMessageService publishMessageService, IRetainMessageService retainMessageService,
                           ISubscriptionService subscriptionService, IPubRelMessageService pubRelMessageService,
                           @Nullable IInternalMessagePublishService internalMessagePublishService, MqttxConfig mqttxConfig,
-                          KafkaTemplate<String, byte[]> kafkaTemplate) {
+                          @Nullable KafkaProducer<String, byte[]> kafkaProducer) {
         Assert.notNull(publishMessageService, "publishMessageService can't be null");
         Assert.notNull(retainMessageService, "retainMessageService can't be null");
         Assert.notNull(subscriptionService, "publishMessageService can't be null");
@@ -77,7 +78,7 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
 
         MqttxConfig.Cluster cluster = mqttxConfig.getCluster();
         MqttxConfig.ShareTopic shareTopic = mqttxConfig.getShareTopic();
-        MqttxConfig.MessageBridge messageBridge = mqttxConfig.getMessageBridge();
+        MqttxConfig.MessageQueueBridge messageQueueBridge = mqttxConfig.getMessageQueueBridge();
         this.publishMessageService = publishMessageService;
         this.retainMessageService = retainMessageService;
         this.subscriptionService = subscriptionService;
@@ -90,12 +91,12 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
         if (round == shareStrategy) {
             roundMap = new ConcurrentHashMap<>();
         }
-        this.enableMessageBridge = messageBridge.getEnable();
+        this.enableMessageBridge = messageQueueBridge.getEnable();
         if (enableMessageBridge) {
-            this.bridgeTopics = messageBridge.getTopics();
-            this.kafkaTemplate = kafkaTemplate;
+            this.mqSubTopics = messageQueueBridge.getSubTopics();
+            this.kafkaProducer = kafkaProducer;
 
-            Assert.notEmpty(bridgeTopics, "消息桥接主题列表不能为空!!!");
+            Assert.notEmpty(mqSubTopics, "消息桥接主题列表不能为空!!!");
         }
 
         if (enableCluster) {
@@ -133,8 +134,8 @@ public class PublishHandler extends AbstractMqttTopicSecureHandler implements Wa
 
         // 消息桥接功能，便于对接各类 MQ(kafka, RocketMQ).
         // 这里提供 kafka 的实现，需要对接其它 MQ 的同学可自行修改.
-        if (enableMessageBridge && bridgeTopics.contains(topic)) {
-            kafkaTemplate.send(topic, data);
+        if (enableMessageBridge && mqSubTopics.contains(topic)) {
+            kafkaProducer.send(new ProducerRecord<>(topic, data));
         }
 
         // 组装消息

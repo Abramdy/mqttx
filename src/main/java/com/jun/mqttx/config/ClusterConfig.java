@@ -32,6 +32,8 @@ import static com.jun.mqttx.constants.InternalMessageEnum.*;
 @ConditionalOnExpression("${mqttx.cluster.enable:false} && !${mqttx.enable-test-mode:false}")
 public class ClusterConfig {
 
+    public static final String REDIS = "redis", KAFKA = "kafka";
+
     @SuppressWarnings("rawtypes")
     @Bean
     public InternalMessageSubscriber internalMessageSubscriber(List<Watcher> watchers, MqttxConfig mqttxConfig) {
@@ -63,7 +65,7 @@ public class ClusterConfig {
      * @param messageListener        {@link MessageListener}
      */
     @Bean
-    @ConditionalOnProperty(name = "mqttx.cluster.type", havingValue = "redis", matchIfMissing = true)
+    @ConditionalOnProperty(name = "mqttx.cluster.type", havingValue = REDIS, matchIfMissing = true)
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory redisConnectionFactory,
                                                                        MessageListener messageListener) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
@@ -87,4 +89,6 @@ public class ClusterConfig {
 
         return redisMessageListenerContainer;
     }
+
+
 }
